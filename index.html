@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<title>ILEK Production</title>
+<link rel="manifest" href="manifest.json">
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Arial;background:#f3f4f6;color:#111827}
+header{background:#111827;color:#fff;padding:20px 16px 16px;position:sticky;top:0;z-index:2}
+header h1{margin:0;font-size:24px}header p{margin:5px 0 0;color:#cbd5e1}
+main{max-width:760px;margin:auto;padding:14px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.card,.panel{background:#fff;border-radius:16px;padding:16px;box-shadow:0 2px 8px #00000012}
+.card{border:0;text-align:left;font-size:16px;font-weight:700;min-height:90px}.card span{display:block;font-size:26px;margin-bottom:8px}
+.panel{margin-top:12px}.panel h2{margin:0 0 12px;font-size:20px}
+label{display:block;font-size:13px;color:#4b5563;margin-top:10px}input,select{width:100%;padding:12px;border:1px solid #d1d5db;border-radius:10px;font-size:16px;margin-top:4px}
+button.primary{width:100%;padding:13px;border:0;border-radius:11px;background:#111827;color:#fff;font-weight:700;font-size:16px;margin-top:14px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.metric{background:#f9fafb;border-radius:12px;padding:12px;margin-top:8px}
+.metric b{display:block;font-size:20px}.muted{color:#6b7280;font-size:13px}.hidden{display:none}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:8px 4px;border-bottom:1px solid #e5e7eb;text-align:left}
+.good{color:#047857}.bad{color:#b91c1c}.footer{text-align:center;color:#6b7280;font-size:12px;padding:24px}
+</style>
+</head>
+<body>
+<header><h1>ILEK Production</h1><p>Учёт производства кафельного клея</p></header>
+<main>
+<section id="home">
+<div class="grid">
+<button class="card" onclick="show('production')"><span>🏭</span>Производство</button>
+<button class="card" onclick="show('stock')"><span>📦</span>Склад сырья</button>
+<button class="card" onclick="show('sales')"><span>💰</span>Продажи</button>
+<button class="card" onclick="show('cost')"><span>🧮</span>Себестоимость</button>
+</div>
+<div class="panel"><h2>Сегодня / всего</h2>
+<div class="row"><div class="metric">Замесов<b id="mBatches">0</b></div><div class="metric">Мешков произведено<b id="mBags">0</b></div></div>
+<div class="row"><div class="metric">Продано<b id="mSold">0</b></div><div class="metric">Выручка<b id="mRevenue">0 ₸</b></div></div>
+</div>
+</section>
+
+<section id="production" class="hidden">
+<div class="panel"><h2>🏭 Новый замес</h2>
+<p class="muted">Рецептура по умолчанию: цемент 250 кг, песок 750 кг, Attacel 2,2 кг. Выход: 40 мешков.</p>
+<label>Количество замесов<input id="batchCount" type="number" min="1" value="1"></label>
+<button class="primary" onclick="addBatch()">Записать производство</button></div>
+<div class="panel"><h2>Расход на 1 замес</h2><div class="metric">Цемент<b>250 кг</b></div><div class="metric">Песок<b>750 кг</b></div><div class="metric">Attacel<b>2,2 кг</b></div><div class="metric">Готовая продукция<b>40 мешков</b></div></div>
+<button class="primary" onclick="show('home')">← На главную</button>
+</section>
+
+<section id="stock" class="hidden">
+<div class="panel"><h2>📦 Приход сырья</h2>
+<label>Материал<select id="stockType"><option value="cement">Цемент, кг</option><option value="sand">Песок, кг</option><option value="chem">Attacel, кг</option><option value="bags">Пустые мешки, шт</option><option value="pallets">Поддоны, шт</option></select></label>
+<label>Количество<input id="stockQty" type="number" step="0.01"></label>
+<button class="primary" onclick="addStock()">Добавить на склад</button></div>
+<div class="panel"><h2>Остатки</h2><div id="stockView"></div></div>
+<button class="primary" onclick="show('home')">← На главную</button>
+</section>
+
+<section id="sales" class="hidden">
+<div class="panel"><h2>💰 Новая продажа</h2>
+<label>Количество мешков<input id="saleQty" type="number" min="1"></label>
+<label>Цена за мешок, ₸<input id="salePrice" type="number" min="0"></label>
+<label>Покупатель<input id="buyer" placeholder="Название / имя"></label>
+<button class="primary" onclick="addSale()">Записать продажу</button></div>
+<div class="panel"><h2>Последние продажи</h2><div id="salesView"></div></div>
+<button class="primary" onclick="show('home')">← На главную</button>
+</section>
+
+<section id="cost" class="hidden">
+<div class="panel"><h2>🧮 Себестоимость</h2>
+<p class="muted">Введите свои закупочные цены. Они сохранятся на этом телефоне.</p>
+<label>Цемент, ₸/кг<input id="pCement" type="number" step="0.01"></label>
+<label>Песок, ₸/кг<input id="pSand" type="number" step="0.01"></label>
+<label>Attacel, ₸/кг<input id="pChem" type="number" step="0.01"></label>
+<label>Мешок, ₸/шт<input id="pBag" type="number" step="0.01"></label>
+<label>Электроэнергия, ₸/кВт⋅ч<input id="pPower" type="number" step="0.01" value="5.375"></label>
+<label>Зарплата на 1 замес, ₸<input id="pLabor" type="number" step="0.01"></label>
+<label>Доставка на 1 замес, ₸<input id="pDelivery" type="number" step="0.01"></label>
+<button class="primary" onclick="calcCost()">Рассчитать и сохранить</button>
+<div class="metric">Себестоимость 1 замеса<b id="batchCost">—</b></div>
+<div class="metric">Себестоимость 1 мешка<b id="bagCost">—</b></div>
+<p class="muted">Электроэнергия рассчитана для 3×3 кВт + 1×7,5 кВт и 40 минут работы: 11 кВт⋅ч на замес.</p>
+</div><button class="primary" onclick="show('home')">← На главную</button>
+</section>
+<div class="footer">ILEK Production • данные хранятся локально на устройстве</div>
+</main>
+<script>
+const defaults={cement:0,sand:0,chem:0,bags:0,pallets:0,finished:0,batches:0,sold:0,revenue:0,sales:[],prices:{}};
+let db=Object.assign({},defaults,JSON.parse(localStorage.getItem('ilekDB')||'{}'));
+function save(){localStorage.setItem('ilekDB',JSON.stringify(db));render()}
+function show(id){document.querySelectorAll('main>section').forEach(x=>x.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');render()}
+function fmt(n){return new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2}).format(n||0)}
+function addStock(){let t=stockType.value,q=+stockQty.value;if(q>0){db[t]=(db[t]||0)+q;stockQty.value='';save()}}
+function addBatch(){let n=+batchCount.value;if(n<1)return;let need={cement:250*n,sand:750*n,chem:2.2*n,bags:40*n};let lacks=[];for(let k in need)if((db[k]||0)<need[k])lacks.push(k);if(lacks.length&&!confirm('Некоторого сырья недостаточно. Всё равно записать замес?'))return;for(let k in need)db[k]=(db[k]||0)-need[k];db.finished=(db.finished||0)+40*n;db.batches=(db.batches||0)+n;save();alert('Производство записано')}
+function addSale(){let q=+saleQty.value,p=+salePrice.value;if(q<1||p<0)return;if(q>db.finished&&!confirm('Готовых мешков на складе меньше. Всё равно записать?'))return;db.finished-=q;db.sold+=q;db.revenue+=q*p;db.sales.unshift({d:new Date().toLocaleDateString('ru-RU'),q,p,b:buyer.value||'—'});db.sales=db.sales.slice(0,30);saleQty.value='';buyer.value='';save()}
+function calcCost(){let ids=['pCement','pSand','pChem','pBag','pPower','pLabor','pDelivery'];ids.forEach(id=>db.prices[id]=+(document.getElementById(id).value||0));save();showCost()}
+function showCost(){let p=db.prices||{};let total=(p.pCement||0)*250+(p.pSand||0)*750+(p.pChem||0)*2.2+(p.pBag||0)*40+(p.pPower||0)*11+(p.pLabor||0)+(p.pDelivery||0);batchCost.textContent=fmt(total)+' ₸';bagCost.textContent=fmt(total/40)+' ₸'}
+function render(){mBatches.textContent=fmt(db.batches);mBags.textContent=fmt(db.batches*40);mSold.textContent=fmt(db.sold);mRevenue.textContent=fmt(db.revenue)+' ₸';
+stockView.innerHTML=`<div class="metric">Цемент<b>${fmt(db.cement)} кг</b></div><div class="metric">Песок<b>${fmt(db.sand)} кг</b></div><div class="metric">Attacel<b>${fmt(db.chem)} кг</b></div><div class="metric">Пустые мешки<b>${fmt(db.bags)} шт</b></div><div class="metric">Готовый клей<b>${fmt(db.finished)} меш.</b></div><div class="metric">Поддоны<b>${fmt(db.pallets)} шт</b></div>`;
+salesView.innerHTML=db.sales.length?'<table><tr><th>Дата</th><th>Клиент</th><th>Шт</th><th>Цена</th></tr>'+db.sales.map(s=>`<tr><td>${s.d}</td><td>${s.b}</td><td>${s.q}</td><td>${fmt(s.p)} ₸</td></tr>`).join('')+'</table>':'<p class="muted">Продаж пока нет</p>';
+for(let id in db.prices){let el=document.getElementById(id);if(el)el.value=db.prices[id]}showCost()}
+render();
+if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
+</script></body></html>
