@@ -1,9 +1,1 @@
-{
-  "name": "ILEK Production",
-  "short_name": "ILEK",
-  "start_url": "./",
-  "display": "standalone",
-  "background_color": "#f3f4f6",
-  "theme_color": "#111827",
-  "lang": "ru"
-}
+{"name":"ILEK Production 2.0","short_name":"ILEK","start_url":"./","display":"standalone","background_color":"#0f1115","theme_color":"#071226","lang":"ru"}
