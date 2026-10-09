@@ -1,52 +1,864 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#071226"><title>ILEK Production 2.0</title><link rel="manifest" href="manifest.json">
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#071226">
+<title>ILEK Production 3.0</title>
+
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:system-ui,Arial;background:#0f1115;color:#f5f7fb}header{padding:20px 18px;background:#071226;position:sticky;top:0;z-index:3}h1{margin:0;font-size:25px}header p{margin:4px 0;color:#aab2c2}main{padding:14px;max-width:800px;margin:auto}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn,.panel{background:#24262b;border:0;border-radius:18px;color:#fff}.btn{padding:18px;text-align:left;font-size:16px;font-weight:750;min-height:94px}.btn i{font-style:normal;font-size:27px;display:block;margin-bottom:8px}.panel{padding:16px;margin:12px 0}h2{margin:0 0 12px}.back{width:100%;padding:13px;border:0;border-radius:12px;font-weight:800}.primary{background:#2563eb;color:#fff}.danger{background:#7f1d1d;color:#fff}.hidden{display:none}label{display:block;color:#bbc1cc;font-size:13px;margin-top:10px}input,select{width:100%;font-size:16px;padding:12px;margin-top:4px;border:1px solid #444;border-radius:11px;background:#15171b;color:#fff}.metric{background:#181a1f;padding:12px;border-radius:12px;margin:7px 0}.metric b{display:block;font-size:21px;margin-top:2px}.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.small{font-size:12px;color:#aab2c2}.tabs{display:flex;gap:6px;margin-bottom:10px}.tabs button{flex:1;padding:9px;border:0;border-radius:10px}.active{background:#2563eb;color:#fff}table{width:100%;border-collapse:collapse;font-size:12px}td,th{padding:8px 3px;border-bottom:1px solid #383b42;text-align:left}.ok{color:#34d399}.warn{color:#fbbf24}
-</style></head><body><header><h1>ILEK Production <small>2.0</small></h1><p>Производство • склад • продажи • прибыль</p></header><main>
-<section id="home"><div class="grid">
-<button class="btn" onclick="go('prod')"><i>🏭</i>Производство</button><button class="btn" onclick="go('stock')"><i>📦</i>Склад</button>
-<button class="btn" onclick="go('sales')"><i>💰</i>Продажи</button><button class="btn" onclick="go('expenses')"><i>🧾</i>Расходы</button>
-<button class="btn" onclick="go('cost')"><i>🧮</i>Себестоимость</button><button class="btn" onclick="go('profit')"><i>📈</i>Прибыль</button>
-<button class="btn" onclick="go('settings')"><i>⚙️</i>Настройки</button><button class="btn" onclick="go('history')"><i>📋</i>История</button>
-</div><div class="panel"><h2>Сводка</h2><div class="row"><div class="metric">Замесов<b id="dashB">0</b></div><div class="metric">Продано мешков<b id="dashS">0</b></div><div class="metric">Выручка<b id="dashR">0 ₸</b></div><div class="metric">Прибыль*<b id="dashP">0 ₸</b></div></div><p class="small">*По записанным продажам, производственной себестоимости и дополнительным расходам.</p></div></section>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ font-family:Arial,sans-serif;
+ background:#07111f;
+ color:#f5f7fb;
+}
+header{
+ padding:18px;
+ background:#0b2342;
+ position:sticky;
+ top:0;
+ z-index:5;
+ border-bottom:1px solid #24476d;
+}
+header h1{margin:0;font-size:21px}
+header small{color:#b8c9dc}
+main{max-width:900px;margin:auto;padding:14px}
+.grid{
+ display:grid;
+ grid-template-columns:repeat(2,1fr);
+ gap:10px;
+}
+.card,.panel{
+ background:#172536;
+ border:1px solid #2a4058;
+ border-radius:14px;
+ padding:14px;
+}
+.card{
+ cursor:pointer;
+ min-height:78px;
+ font-weight:bold;
+}
+.card:hover{background:#20344b}
+.panel{margin-bottom:12px}
+h2,h3{margin-top:4px}
+button{
+ border:0;
+ border-radius:10px;
+ padding:11px 14px;
+ cursor:pointer;
+ font-weight:bold;
+}
+.primary{background:#13a8e5;color:white}
+.green{background:#20a86b;color:white}
+.red{background:#d94b55;color:white}
+.gray{background:#435267;color:white}
+input,select,textarea{
+ width:100%;
+ padding:10px;
+ margin:5px 0 10px;
+ border-radius:8px;
+ border:1px solid #42556c;
+ background:#0e1b2b;
+ color:white;
+}
+label{font-size:13px;color:#cbd7e5}
+.hidden{display:none}
+.row{
+ display:grid;
+ grid-template-columns:repeat(2,1fr);
+ gap:10px;
+}
+.metric{
+ background:#0e1b2b;
+ border-radius:10px;
+ padding:12px;
+}
+.metric small{color:#aebed0}
+.metric strong{display:block;font-size:20px;margin-top:5px}
+.item{
+ background:#101d2d;
+ border:1px solid #2a4058;
+ border-radius:10px;
+ padding:10px;
+ margin:7px 0;
+}
+.actions{
+ display:flex;
+ gap:7px;
+ flex-wrap:wrap;
+ margin-top:8px;
+}
+.back{
+ width:100%;
+ margin-top:10px;
+ background:#dfe8ef;
+ color:#152334;
+}
+table{
+ width:100%;
+ border-collapse:collapse;
+ font-size:13px;
+}
+th,td{
+ border-bottom:1px solid #30445a;
+ padding:8px 4px;
+ text-align:left;
+}
+.notice{
+ padding:10px;
+ background:#112b42;
+ border-radius:8px;
+ margin:8px 0;
+ font-size:13px;
+}
+@media(max-width:600px){
+ .row{grid-template-columns:1fr}
+ main{padding:10px}
+}
+</style>
+</head>
 
-<section id="prod" class="hidden"><div class="panel"><h2>🏭 Производство</h2><label>Продукт<select id="prodType"><option value="glue">Кафельный клей</option><option value="cps">ЦПС</option></select></label><label>Количество замесов<input id="prodN" type="number" min="1" value="1"></label><button class="back primary" onclick="make()">Записать производство</button></div><div class="panel" id="recipe"></div><button class="back" onclick="go('home')">← Главная</button></section>
+<body>
 
-<section id="stock" class="hidden"><div class="panel"><h2>📦 Приход сырья</h2><label>Материал<select id="stType"><option value="cement">Цемент, кг</option><option value="sand">Песок, кг</option><option value="attacel">Attacel, кг</option><option value="bags">Мешки, шт</option><option value="pallets">Поддоны, шт</option></select></label><label>Количество<input id="stQty" type="number" step=".01"></label><label>Цена за единицу, ₸ (необязательно)<input id="stPrice" type="number" step=".01"></label><button class="back primary" onclick="stockIn()">Добавить</button></div><div class="panel"><h2>Остатки</h2><div id="stockList"></div></div><button class="back" onclick="go('home')">← Главная</button></section>
+<header>
+<h1>ILEK Production <small>3.0</small></h1>
+<small>Производство • склад • продажи • себестоимость • прибыль</small>
+</header>
 
-<section id="sales" class="hidden"><div class="panel"><h2>💰 Продажа</h2><label>Продукт<select id="saleType"><option value="glue">Кафельный клей</option><option value="cps">ЦПС</option></select></label><label>Мешков<input id="saleN" type="number"></label><label>Цена за мешок, ₸<input id="salePrice" type="number"></label><label>Клиент<input id="client"></label><label>Доставка, ₸<input id="saleDelivery" type="number" value="0"></label><button class="back primary" onclick="sell()">Записать продажу</button></div><div class="panel"><h2>Последние продажи</h2><div id="saleList"></div></div><button class="back" onclick="go('home')">← Главная</button></section>
+<main>
 
-<section id="expenses" class="hidden"><div class="panel"><h2>🧾 Дополнительный расход</h2><label>Статья<select id="exType"><option>Зарплата</option><option>Доставка</option><option>Электричество</option><option>Газ</option><option>Ремонт</option><option>Прочее</option></select></label><label>Сумма, ₸<input id="exSum" type="number"></label><label>Комментарий<input id="exNote"></label><button class="back primary" onclick="expense()">Добавить расход</button></div><div class="panel">Всего дополнительных расходов<b id="exTotal" style="display:block;font-size:24px"></b></div><button class="back" onclick="go('home')">← Главная</button></section>
+<section id="home">
 
-<section id="cost" class="hidden"><div class="panel"><h2>🧮 Себестоимость</h2><label>Продукт<select id="costType" onchange="renderCost()"><option value="glue">Кафельный клей</option><option value="cps">ЦПС</option></select></label><div id="costResult"></div><p class="small">Цена сырья берётся из настроек/последнего прихода. Электроэнергия и труд — из настроек.</p></div><button class="back" onclick="go('home')">← Главная</button></section>
+<div class="grid">
+<div class="card" onclick="show('production')">🏭<br>Производство</div>
+<div class="card" onclick="show('stock')">📦<br>Склад</div>
+<div class="card" onclick="show('sales')">💰<br>Продажи</div>
+<div class="card" onclick="show('expenses')">🧾<br>Расходы</div>
+<div class="card" onclick="show('cost')">🧮<br>Себестоимость</div>
+<div class="card" onclick="show('profit')">📈<br>Прибыль</div>
+<div class="card" onclick="show('settings')">⚙️<br>Настройки</div>
+<div class="card" onclick="show('history')">📋<br>История</div>
+</div>
 
-<section id="profit" class="hidden"><div class="panel"><h2>📈 Финансовый результат</h2><div class="metric">Выручка<b id="pRevenue"></b></div><div class="metric">Расчётная себестоимость проданного<b id="pCogs"></b></div><div class="metric">Доп. расходы<b id="pExpenses"></b></div><div class="metric">Расчётная прибыль<b id="pProfit"></b></div></div><button class="back" onclick="go('home')">← Главная</button></section>
+<div class="panel" style="margin-top:12px">
+<h2>Сводка</h2>
+<div class="grid">
+<div class="metric"><small>Замесов</small><strong id="sumBatches">0</strong></div>
+<div class="metric"><small>Продано</small><strong id="sumSales">0</strong></div>
+<div class="metric"><small>Выручка</small><strong id="sumRevenue">0 ₸</strong></div>
+<div class="metric"><small>Прибыль*</small><strong id="sumProfit">0 ₸</strong></div>
+</div>
+<small>*По внесённым операциям и текущей себестоимости.</small>
+</div>
 
-<section id="settings" class="hidden"><div class="panel"><h2>⚙️ Цены и параметры</h2>
-<label>Цемент, ₸/кг<input id="qCement" type="number" step=".01"></label><label>Песок, ₸/кг<input id="qSand" type="number" step=".01"></label><label>Attacel, ₸/кг<input id="qAttacel" type="number" step=".01"></label><label>Мешок, ₸/шт<input id="qBag" type="number" step=".01"></label><label>Поддон, ₸/шт<input id="qPallet" type="number" step=".01"></label><label>Свет, ₸/кВт⋅ч<input id="qPower" type="number" step=".001"></label><label>Труд на 1 замес, ₸<input id="qLabor" type="number"></label><label>Доставка сырья на 1 замес, ₸<input id="qDelivery" type="number"></label><button class="back primary" onclick="saveSettings()">Сохранить</button></div><button class="back" onclick="go('home')">← Главная</button></section>
+</section>
 
-<section id="history" class="hidden"><div class="panel"><h2>📋 Последние операции</h2><div id="hist"></div></div><button class="back" onclick="go('home')">← Главная</button></section>
-</main><script>
-const DEF={stock:{cement:0,sand:0,attacel:0,bags:0,pallets:0,glue:0,cps:0},prices:{cement:0,sand:0,attacel:0,bag:0,pallet:0,power:5.375,labor:0,delivery:0},batches:{glue:0,cps:0},sales:[],expenses:[],history:[]};
-let db=JSON.parse(localStorage.getItem('ilek2')||'null')||DEF; for(let k in DEF)if(db[k]===undefined)db[k]=DEF[k];
-const recipes={glue:{name:'Кафельный клей',cement:250,sand:750,attacel:2.2,bags:40,power:11},cps:{name:'ЦПС',cement:200,sand:800,attacel:0,bags:40,power:11}};
-const F=n=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2}).format(+n||0);
-function save(){localStorage.setItem('ilek2',JSON.stringify(db));render()}
-function go(id){document.querySelectorAll('main>section').forEach(x=>x.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');render()}
-function addHist(t){db.history.unshift(new Date().toLocaleString('ru-RU')+' — '+t);db.history=db.history.slice(0,50)}
-function unitCost(t){let r=recipes[t],p=db.prices;return (r.cement*p.cement+r.sand*p.sand+r.attacel*p.attacel+r.bags*p.bag+r.power*p.power+p.labor+p.delivery)/r.bags}
-function make(){let t=prodType.value,n=+prodN.value||0,r=recipes[t];if(n<1)return;let needs={cement:r.cement*n,sand:r.sand*n,attacel:r.attacel*n,bags:r.bags*n};let lack=Object.keys(needs).some(k=>db.stock[k]<needs[k]);if(lack&&!confirm('Сырья недостаточно. Всё равно записать?'))return;for(let k in needs)db.stock[k]-=needs[k];db.stock[t]+=r.bags*n;db.batches[t]+=n;addHist(`Производство: ${r.name}, ${n} замес.`);save()}
-function stockIn(){let t=stType.value,q=+stQty.value,p=+stPrice.value;if(q<=0)return;db.stock[t]+=q;if(p>0){let map={cement:'cement',sand:'sand',attacel:'attacel',bags:'bag',pallets:'pallet'};db.prices[map[t]]=p}addHist(`Приход ${t}: ${q}`);stQty.value='';stPrice.value='';save()}
-function sell(){let t=saleType.value,n=+saleN.value,p=+salePrice.value,d=+saleDelivery.value||0;if(n<=0||p<0)return;if(n>db.stock[t]&&!confirm('На складе меньше готовой продукции. Всё равно записать?'))return;db.stock[t]-=n;db.sales.unshift({date:new Date().toLocaleString('ru-RU'),t,n,p,d,client:client.value||'—',cost:unitCost(t)});addHist(`Продажа ${recipes[t].name}: ${n} меш. × ${p} ₸`);saleN.value='';client.value='';save()}
-function expense(){let s=+exSum.value;if(s<=0)return;db.expenses.unshift({date:new Date().toLocaleString('ru-RU'),type:exType.value,sum:s,note:exNote.value});addHist(`Расход ${exType.value}: ${s} ₸`);exSum.value='';exNote.value='';save()}
-function saveSettings(){db.prices={cement:+qCement.value||0,sand:+qSand.value||0,attacel:+qAttacel.value||0,bag:+qBag.value||0,pallet:+qPallet.value||0,power:+qPower.value||0,labor:+qLabor.value||0,delivery:+qDelivery.value||0};addHist('Изменены цены и параметры');save()}
-function renderCost(){let t=costType.value,u=unitCost(t),r=recipes[t];costResult.innerHTML=`<div class="metric">1 замес (${r.bags} мешков)<b>${F(u*r.bags)} ₸</b></div><div class="metric">1 мешок<b>${F(u)} ₸</b></div>`}
-function render(){let sold=db.sales.reduce((a,s)=>a+s.n,0),rev=db.sales.reduce((a,s)=>a+s.n*s.p,0),cogs=db.sales.reduce((a,s)=>a+s.n*s.cost,0),ex=db.expenses.reduce((a,e)=>a+e.sum,0)+db.sales.reduce((a,s)=>a+s.d,0),profit=rev-cogs-ex;
-dashB.textContent=F(db.batches.glue+db.batches.cps);dashS.textContent=F(sold);dashR.textContent=F(rev)+' ₸';dashP.textContent=F(profit)+' ₸';
-stockList.innerHTML=`<div class="metric">Цемент<b>${F(db.stock.cement)} кг</b></div><div class="metric">Песок<b>${F(db.stock.sand)} кг</b></div><div class="metric">Attacel<b>${F(db.stock.attacel)} кг</b></div><div class="metric">Пустые мешки<b>${F(db.stock.bags)} шт</b></div><div class="metric">Поддоны<b>${F(db.stock.pallets)} шт</b></div><div class="metric">Кафельный клей<b>${F(db.stock.glue)} меш.</b></div><div class="metric">ЦПС<b>${F(db.stock.cps)} меш.</b></div>`;
-saleList.innerHTML=db.sales.length?'<table><tr><th>Дата</th><th>Товар</th><th>Шт</th><th>₸</th></tr>'+db.sales.slice(0,15).map(s=>`<tr><td>${s.date.split(',')[0]}</td><td>${recipes[s.t].name}</td><td>${s.n}</td><td>${F(s.p)}</td></tr>`).join('')+'</table>':'<span class="small">Продаж пока нет</span>';
-exTotal.textContent=F(ex)+' ₸';pRevenue.textContent=F(rev)+' ₸';pCogs.textContent=F(cogs)+' ₸';pExpenses.textContent=F(ex)+' ₸';pProfit.textContent=F(profit)+' ₸';
-hist.innerHTML=db.history.length?db.history.map(x=>`<div class="metric small">${x}</div>`).join(''):'<span class="small">Операций пока нет</span>';
-let p=db.prices;qCement.value=p.cement;qSand.value=p.sand;qAttacel.value=p.attacel;qBag.value=p.bag;qPallet.value=p.pallet;qPower.value=p.power;qLabor.value=p.labor;qDelivery.value=p.delivery;
-let r=recipes[prodType.value];recipe.innerHTML=`<h2>${r.name}: 1 замес</h2><div class="metric">Цемент <b>${r.cement} кг</b></div><div class="metric">Песок <b>${r.sand} кг</b></div>${r.attacel?`<div class="metric">Attacel <b>${r.attacel} кг</b></div>`:''}<div class="metric">Выход <b>${r.bags} мешков</b></div>`;renderCost()}
-prodType.onchange=render;render();if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
-</script></body></html>
+<section id="production" class="hidden">
+<div class="panel">
+<h2>🏭 Производство</h2>
+<label>Продукция</label>
+<select id="prodProduct"></select>
+
+<label>Количество замесов</label>
+<input id="batchCount" type="number" value="1" min="1">
+
+<div id="recipePreview"></div>
+
+<button class="primary" onclick="makeProduction()">Произвести</button>
+</div>
+<button class="back" onclick="show('home')">← Главная</button>
+</section>
+
+<section id="stock" class="hidden">
+<div class="panel">
+<h2>📦 Склад сырья</h2>
+
+<label>Материал</label>
+<select id="stockMaterial"></select>
+
+<label>Приход, кг / шт.</label>
+<input id="stockQty" type="number" step="0.01">
+
+<label>Цена за единицу, ₸</label>
+<input id="stockPrice" type="number" step="0.01">
+
+<button class="green" onclick="addStock()">Добавить приход</button>
+
+<div id="stockList"></div>
+</div>
+<button class="back" onclick="show('home')">← Главная</button>
+</section>
+
+<section id="sales" class="hidden">
+<div class="panel">
+<h2>💰 Продажи</h2>
+
+<label>Продукция</label>
+<select id="saleProduct"></select>
+
+<label>Количество мешков / единиц</label>
+<input id="saleQty" type="number" min="1">
+
+<label>Цена продажи за единицу, ₸</label>
+<input id="salePrice" type="number">
+
+<label>Покупатель</label>
+<input id="saleCustomer" placeholder="Необязательно">
+
+<button class="green" onclick="addSale()">Сохранить продажу</button>
+</div>
+<button class="back" onclick="show('home')">← Главная</button>
+</section>
+
+<section id="expenses" class="hidden">
+<div class="panel">
+<h2>🧾 Расходы</h2>
+
+<label>Название расхода</label>
+<input id="expenseName" placeholder="Доставка, зарплата, газ...">
+
+<label>Сумма, ₸</label>
+<input id="expenseAmount" type="number">
+
+<button class="primary" onclick="addExpense()">Добавить расход</button>
+
+<div id="expenseList"></div>
+</div>
+<button class="back" onclick="show('home')">← Главная</button>
+</section>
+
+<section id="cost" class="hidden">
+<div class="panel">
+<h2>🧮 Себестоимость</h2>
+<div id="costList"></div>
+</div>
+<button class="back" onclick="show('home')">← Главная</button>
+</section>
+
+<section id="profit" class="hidden">
+<div class="panel">
+<h2>📈 Прибыль</h2>
+<div id="profitInfo"></div>
+</div>
+<button class="back" onclick="show('home')">← Главная</button>
+</section>
+
+<section id="settings" class="hidden">
+
+<div class="panel">
+<h2>⚙️ Продукция и рецептуры</h2>
+<div class="notice">
+Все названия, веса и рецептуры можно изменять.
+</div>
+<div id="productSettings"></div>
+<button class="green" onclick="newProduct()">+ Добавить продукцию</button>
+</div>
+
+<div class="panel">
+<h2>📦 Материалы</h2>
+<div id="materialSettings"></div>
+<button class="green" onclick="newMaterial()">+ Добавить материал</button>
+</div>
+
+<div class="panel">
+<h2>💾 Резервная копия</h2>
+<button class="primary" onclick="backup()">Скачать резервную копию</button>
+<br><br>
+<label>Восстановить из копии</label>
+<input type="file" id="restoreFile" accept=".json">
+<button class="gray" onclick="restore()">Восстановить</button>
+</div>
+
+<button class="back" onclick="show('home')">← Главная</button>
+</section>
+
+<section id="history" class="hidden">
+<div class="panel">
+<h2>📋 История операций</h2>
+<div class="notice">
+Ошибочную операцию можно удалить. Остатки и показатели будут пересчитаны.
+</div>
+<div id="historyList"></div>
+</div>
+<button class="back" onclick="show('home')">← Главная</button>
+</section>
+
+</main>
+
+<script>
+
+const KEY="ilekProduction3";
+
+const defaults={
+materials:[
+{name:"Цемент",price:0,stock:0},
+{name:"Песок сеяный",price:0,stock:0},
+{name:"Attacel",price:0,stock:0},
+{name:"Мраморная мука",price:0,stock:0},
+{name:"Wekcol MP 400",price:0,stock:0},
+{name:"Пеностоп 50 Тип C",price:0,stock:0},
+{name:"HW5111",price:0,stock:0},
+{name:"Лимонная кислота",price:0,stock:0},
+{name:"PC1701",price:0,stock:0},
+{name:"Гипс",price:0,stock:0},
+{name:"G3550L",price:2700,stock:0},
+{name:"STE-01",price:1700,stock:0},
+{name:"Вода",price:0,stock:0},
+{name:"BT 101",price:0,stock:0},
+{name:"Диспергатор A45",price:0,stock:0},
+{name:"Пеногаситель FC 999",price:0,stock:0},
+{name:"Биоцид MIT 15",price:0,stock:0},
+{name:"Микрокальцит KM2",price:0,stock:0},
+{name:"Диоксид титана Billios",price:0,stock:0},
+{name:"Дисперсия акриловая A115",price:0,stock:0},
+{name:"YS 8116",price:0,stock:0},
+{name:"NaOH раствор 10%",price:0,stock:0},
+{name:"Коалесцент БДГА G12",price:0,stock:0},
+{name:"Смягчитель ТПФН",price:0,stock:0}
+],
+
+products:[
+{
+name:"Кафельный клей",
+batchWeight:1000,
+units:40,
+unitWeight:25,
+recipe:[
+["Цемент",250],
+["Песок сеяный",750],
+["Attacel",2.2]
+]
+},
+{
+name:"Наливной пол",
+batchWeight:1050,
+units:42,
+unitWeight:25,
+recipe:[
+["Цемент",250],
+["Песок сеяный",615.2],
+["Мраморная мука",160],
+["Wekcol MP 400",0.9],
+["Пеностоп 50 Тип C",0.4],
+["HW5111",4],
+["Лимонная кислота",0.5],
+["PC1701",3],
+["Гипс",16]
+]
+},
+{
+name:"Гипсовая шпаклёвка",
+batchWeight:1000,
+units:40,
+unitWeight:25,
+recipe:[
+["Гипс",300],
+["Мраморная мука",696.5],
+["Лимонная кислота",1.5],
+["G3550L",2]
+]
+},
+{
+name:"Гипсовая штукатурка",
+batchWeight:1000,
+units:40,
+unitWeight:25,
+recipe:[
+["Гипс",300],
+["Мраморная мука",295.85],
+["Песок сеяный",400],
+["G3550L",2],
+["Лимонная кислота",1.5],
+["STE-01",0.65]
+]
+},
+{
+name:"Краска интерьерная супербелая, стандарт",
+batchWeight:303.69,
+units:1,
+unitWeight:303.69,
+recipe:[
+["Вода",125],
+["BT 101",1],
+["Диспергатор A45",2],
+["Пеногаситель FC 999",0.4],
+["Биоцид MIT 15",0.9],
+["Микрокальцит KM2",150],
+["Диоксид титана Billios",8],
+["Дисперсия акриловая A115",13],
+["YS 8116",1.8],
+["NaOH раствор 10%",0.04],
+["Коалесцент БДГА G12",0.65],
+["Смягчитель ТПФН",0.9]
+]
+}
+],
+
+production:[],
+sales:[],
+expenses:[],
+stockMoves:[]
+};
+
+let db;
+
+try{
+ db=JSON.parse(localStorage.getItem(KEY))||structuredClone(defaults);
+}catch(e){
+ db=JSON.parse(JSON.stringify(defaults));
+}
+
+function save(){
+ localStorage.setItem(KEY,JSON.stringify(db));
+ renderAll();
+}
+
+function money(n){
+ return Number(n||0).toLocaleString("ru-RU",{maximumFractionDigits:2})+" ₸";
+}
+
+function show(id){
+ document.querySelectorAll("main>section").forEach(x=>x.classList.add("hidden"));
+ document.getElementById(id).classList.remove("hidden");
+ renderAll();
+ window.scrollTo(0,0);
+}
+
+function productCost(p){
+ return p.recipe.reduce((sum,r)=>{
+  let m=db.materials.find(x=>x.name===r[0]);
+  return sum+(m?Number(m.price||0)*Number(r[1]):0);
+ },0);
+}
+
+function renderSelects(){
+ let opts=db.products.map((p,i)=>`<option value="${i}">${p.name}</option>`).join("");
+ ["prodProduct","saleProduct"].forEach(id=>{
+  let el=document.getElementById(id);
+  let old=el.value;
+  el.innerHTML=opts;
+  if(old!=="") el.value=old;
+ });
+
+ let mats=db.materials.map((m,i)=>`<option value="${i}">${m.name}</option>`).join("");
+ document.getElementById("stockMaterial").innerHTML=mats;
+
+ document.getElementById("prodProduct").onchange=renderRecipe;
+ renderRecipe();
+}
+
+function renderRecipe(){
+ let i=Number(document.getElementById("prodProduct").value||0);
+ let p=db.products[i];
+ if(!p)return;
+
+ document.getElementById("recipePreview").innerHTML=
+ `<div class="item">
+ <b>${p.name}</b><br>
+ Замес: ${p.batchWeight} кг<br>
+ Выход: ${p.units} ед. × ${p.unitWeight} кг
+ <table>
+ <tr><th>Сырьё</th><th>Количество</th></tr>
+ ${p.recipe.map(r=>`<tr><td>${r[0]}</td><td>${r[1]} кг</td></tr>`).join("")}
+ </table>
+ </div>`;
+}
+
+function makeProduction(){
+ let i=Number(prodProduct.value);
+ let count=Number(batchCount.value);
+ if(!count||count<=0)return alert("Введите количество замесов");
+
+ let p=db.products[i];
+
+ for(let r of p.recipe){
+  let m=db.materials.find(x=>x.name===r[0]);
+  if(m)m.stock-=Number(r[1])*count;
+ }
+
+ db.production.push({
+  id:Date.now(),
+  date:new Date().toLocaleString("ru-RU"),
+  product:p.name,
+  batches:count,
+  units:p.units*count
+ });
+
+ save();
+ alert("Производство сохранено");
+}
+
+function addStock(){
+ let m=db.materials[Number(stockMaterial.value)];
+ let q=Number(stockQty.value);
+ let price=Number(stockPrice.value);
+
+ if(!q)return alert("Введите количество");
+
+ m.stock+=q;
+ if(price>=0)m.price=price;
+
+ db.stockMoves.push({
+  id:Date.now(),
+  date:new Date().toLocaleString("ru-RU"),
+  material:m.name,
+  qty:q,
+  price:price
+ });
+
+ stockQty.value="";
+ save();
+}
+
+function addSale(){
+ let p=db.products[Number(saleProduct.value)];
+ let q=Number(saleQty.value);
+ let price=Number(salePrice.value);
+
+ if(!q||!price)return alert("Введите количество и цену");
+
+ db.sales.push({
+  id:Date.now(),
+  date:new Date().toLocaleString("ru-RU"),
+  product:p.name,
+  qty:q,
+  price:price,
+  customer:saleCustomer.value
+ });
+
+ saleQty.value="";
+ saleCustomer.value="";
+ save();
+}
+
+function addExpense(){
+ let amount=Number(expenseAmount.value);
+ if(!expenseName.value||!amount)return alert("Заполните расход");
+
+ db.expenses.push({
+  id:Date.now(),
+  date:new Date().toLocaleString("ru-RU"),
+  name:expenseName.value,
+  amount
+ });
+
+ expenseName.value="";
+ expenseAmount.value="";
+ save();
+}
+
+function renderStock(){
+ stockList.innerHTML=db.materials.map(m=>
+ `<div class="item">
+ <b>${m.name}</b><br>
+ Остаток: ${Number(m.stock).toFixed(2)}<br>
+ Цена: ${money(m.price)}
+ </div>`).join("");
+}
+
+function renderExpenses(){
+ expenseList.innerHTML=db.expenses.slice().reverse().map(e=>
+ `<div class="item">${e.date}<br><b>${e.name}</b> — ${money(e.amount)}</div>`
+ ).join("")||"Расходов пока нет";
+}
+
+function renderCost(){
+ costList.innerHTML=db.products.map(p=>{
+  let total=productCost(p);
+  let one=p.units?total/p.units:0;
+  return `<div class="item">
+  <b>${p.name}</b><br>
+  Сырьё на 1 замес: <b>${money(total)}</b><br>
+  Себестоимость сырья на единицу: <b>${money(one)}</b>
+  </div>`;
+ }).join("");
+}
+
+function renderProfit(){
+ let revenue=db.sales.reduce((s,x)=>s+x.qty*x.price,0);
+ let expenses=db.expenses.reduce((s,x)=>s+x.amount,0);
+
+ let soldCost=db.sales.reduce((s,x)=>{
+  let p=db.products.find(z=>z.name===x.product);
+  if(!p)return s;
+  return s+(productCost(p)/p.units)*x.qty;
+ },0);
+
+ let profit=revenue-expenses-soldCost;
+
+ profitInfo.innerHTML=`
+ <div class="metric"><small>Выручка</small><strong>${money(revenue)}</strong></div><br>
+ <div class="metric"><small>Себестоимость проданного сырья</small><strong>${money(soldCost)}</strong></div><br>
+ <div class="metric"><small>Дополнительные расходы</small><strong>${money(expenses)}</strong></div><br>
+ <div class="metric"><small>Расчётная прибыль</small><strong>${money(profit)}</strong></div>`;
+}
+
+function renderSummary(){
+ let batches=db.production.reduce((s,x)=>s+x.batches,0);
+ let sold=db.sales.reduce((s,x)=>s+x.qty,0);
+ let revenue=db.sales.reduce((s,x)=>s+x.qty*x.price,0);
+ let expenses=db.expenses.reduce((s,x)=>s+x.amount,0);
+
+ let soldCost=db.sales.reduce((s,x)=>{
+  let p=db.products.find(z=>z.name===x.product);
+  return s+(p?(productCost(p)/p.units)*x.qty:0);
+ },0);
+
+ sumBatches.textContent=batches;
+ sumSales.textContent=sold;
+ sumRevenue.textContent=money(revenue);
+ sumProfit.textContent=money(revenue-expenses-soldCost);
+}
+
+function renderProductSettings(){
+ productSettings.innerHTML=db.products.map((p,i)=>`
+ <div class="item">
+ <b>${p.name}</b><br>
+ Замес: ${p.batchWeight} кг • Выход: ${p.units} ед.
+ <div class="actions">
+ <button class="primary" onclick="editProduct(${i})">✏️ Изменить</button>
+ <button class="red" onclick="deleteProduct(${i})">Удалить</button>
+ </div>
+ </div>`).join("");
+}
+
+function editProduct(i){
+ let p=db.products[i];
+
+ let name=prompt("Название продукции",p.name);
+ if(name===null)return;
+
+ let bw=prompt("Вес одного замеса, кг",p.batchWeight);
+ if(bw===null)return;
+
+ let units=prompt("Количество мешков / единиц с замеса",p.units);
+ if(units===null)return;
+
+ let uw=prompt("Вес одной единицы, кг",p.unitWeight);
+ if(uw===null)return;
+
+ p.name=name;
+ p.batchWeight=Number(bw);
+ p.units=Number(units);
+ p.unitWeight=Number(uw);
+
+ editRecipe(i);
+}
+
+function editRecipe(i){
+ let p=db.products[i];
+
+ let text=p.recipe.map(r=>r[0]+"="+r[1]).join("\n");
+
+ let result=prompt(
+ "Рецептура.\nКаждый компонент с новой строки:\nНазвание=кг",
+ text
+ );
+
+ if(result!==null){
+  p.recipe=result.split("\n")
+   .map(x=>x.trim())
+   .filter(Boolean)
+   .map(x=>{
+    let pos=x.lastIndexOf("=");
+    return [x.slice(0,pos).trim(),Number(x.slice(pos+1).replace(",","."))];
+   })
+   .filter(x=>x[0]&&!isNaN(x[1]));
+
+  p.recipe.forEach(r=>{
+   if(!db.materials.some(m=>m.name===r[0])){
+    db.materials.push({name:r[0],price:0,stock:0});
+   }
+  });
+ }
+
+ save();
+}
+
+function deleteProduct(i){
+ if(confirm("Удалить эту продукцию?")){
+  db.products.splice(i,1);
+  save();
+ }
+}
+
+function newProduct(){
+ let name=prompt("Название новой продукции");
+ if(!name)return;
+
+ db.products.push({
+  name,
+  batchWeight:1000,
+  units:40,
+  unitWeight:25,
+  recipe:[]
+ });
+
+ save();
+ editProduct(db.products.length-1);
+}
+
+function renderMaterialSettings(){
+ materialSettings.innerHTML=db.materials.map((m,i)=>`
+ <div class="item">
+ <b>${m.name}</b><br>
+ Цена: ${money(m.price)} • Остаток: ${Number(m.stock).toFixed(2)}
+ <div class="actions">
+ <button class="primary" onclick="editMaterial(${i})">✏️ Изменить</button>
+ </div>
+ </div>`).join("");
+}
+
+function editMaterial(i){
+ let m=db.materials[i];
+
+ let oldName=m.name;
+ let name=prompt("Название материала",m.name);
+ if(name===null)return;
+
+ let price=prompt("Цена за кг / единицу, ₸",m.price);
+ if(price===null)return;
+
+ let stock=prompt("Текущий остаток",m.stock);
+ if(stock===null)return;
+
+ m.name=name;
+ m.price=Number(price);
+ m.stock=Number(stock);
+
+ db.products.forEach(p=>{
+  p.recipe.forEach(r=>{
+   if(r[0]===oldName)r[0]=name;
+  });
+ });
+
+ save();
+}
+
+function newMaterial(){
+ let name=prompt("Название материала");
+ if(!name)return;
+
+ db.materials.push({name,price:0,stock:0});
+ save();
+}
+
+function renderHistory(){
+ let arr=[];
+
+ db.production.forEach(x=>arr.push({...x,type:"production"}));
+ db.sales.forEach(x=>arr.push({...x,type:"sale"}));
+ db.expenses.forEach(x=>arr.push({...x,type:"expense"}));
+ db.stockMoves.forEach(x=>arr.push({...x,type:"stock"}));
+
+ arr.sort((a,b)=>b.id-a.id);
+
+ historyList.innerHTML=arr.map(x=>{
+  let txt="";
+
+  if(x.type==="production")
+   txt=`🏭 Производство: ${x.product}, ${x.batches} замес.`;
+
+  if(x.type==="sale")
+   txt=`💰 Продажа: ${x.product}, ${x.qty} ед. × ${money(x.price)}`;
+
+  if(x.type==="expense")
+   txt=`🧾 Расход: ${x.name}, ${money(x.amount)}`;
+
+  if(x.type==="stock")
+   txt=`📦 Приход: ${x.material}, ${x.qty}`;
+
+  return `<div class="item">
+   ${x.date}<br><b>${txt}</b>
+   <div class="actions">
+   <button class="red" onclick="deleteOperation('${x.type}',${x.id})">Удалить</button>
+   </div>
+   </div>`;
+ }).join("")||"История пока пустая";
+}
+
+function deleteOperation(type,id){
+ if(!confirm("Удалить эту операцию?"))return;
+
+ if(type==="production"){
+  let x=db.production.find(z=>z.id===id);
+  let p=x&&db.products.find(z=>z.name===x.product);
+
+  if(x&&p){
+   p.recipe.forEach(r=>{
+    let m=db.materials.find(z=>z.name===r[0]);
+    if(m)m.stock+=Number(r[1])*x.batches;
+   });
+  }
+
+  db.production=db.production.filter(x=>x.id!==id);
+ }
+
+ if(type==="sale")
+  db.sales=db.sales.filter(x=>x.id!==id);
+
+ if(type==="expense")
+  db.expenses=db.expenses.filter(x=>x.id!==id);
+
+ if(type==="stock"){
+  let x=db.stockMoves.find(z=>z.id===id);
+  if(x){
+   let m=db.materials.find(z=>z.name===x.material);
+   if(m)m.stock-=x.qty;
+  }
+  db.stockMoves=db.stockMoves.filter(x=>x.id!==id);
+ }
+
+ save();
+}
+
+function backup(){
+ let blob=new Blob([JSON.stringify(db,null,2)],{type:"application/json"});
+ let a=document.createElement("a");
+ a.href=URL.createObjectURL(blob);
+ a.download="ILEK_backup_"+new Date().toISOString().slice(0,10)+".json";
+ a.click();
+ URL.revokeObjectURL(a.href);
+}
+
+function restore(){
+ let f=restoreFile.files[0];
+ if(!f)return alert("Выберите файл резервной копии");
+
+ let reader=new FileReader();
+
+ reader.onload=()=>{
+  try{
+   let d=JSON.parse(reader.result);
+   if(!d.products||!d.materials)throw new Error();
+   db=d;
+   save();
+   alert("Данные восстановлены");
+  }catch(e){
+   alert("Неверный файл резервной копии");
+  }
+ };
+
+ reader.readAsText(f);
+}
+
+function renderAll(){
+ renderSelects();
+ renderStock();
+ renderExpenses();
+ renderCost();
+ renderProfit();
+ renderSummary();
+ renderProductSettings();
+ renderMaterialSettings();
+ renderHistory();
+}
+
+renderAll();
+
+</script>
+</body>
+</html>
